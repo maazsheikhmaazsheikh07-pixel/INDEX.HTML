@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Car Racing Game</title>
+<style>
+body {
+    margin: 0;
+    background: #222;
+    text-align: center;
+    font-family: Arial;
+}
+
+canvas {
+    background: #555;
+    border: 4px solid white;
+    margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<h2 style="color:white;">🚗 Car Racing Game</h2>
+<canvas id="game" width="400" height="600"></canvas>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+let car = {
+    x: 175,
+    y: 500,
+    width: 50,
+    height: 80,
+    speed: 6
+};
+
+let enemy = {
+    x: Math.random() * 350,
+    y: -100,
+    width: 50,
+    height: 80,
+    speed: 5
+};
+
+let score = 0;
+
+document.addEventListener("keydown", function(e) {
+
+    if (e.key === "ArrowLeft" && car.x > 0) {
+        car.x -= car.speed;
+    }
+
+    if (e.key === "ArrowRight" && car.x < canvas.width - car.width) {
+        car.x += car.speed;
+    }
+});
+
+function gameLoop() {
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Road
+    ctx.fillStyle = "#333";
+    ctx.fillRect(50, 0, 300, 600);
+
+    // Road lines
+    ctx.fillStyle = "white";
+    for (let y = 0; y < 600; y += 80) {
+        ctx.fillRect(195, y, 10, 40);
+    }
+
+    // Player car
+    ctx.fillStyle = "red";
+    ctx.fillRect(car.x, car.y, car.width, car.height);
+
+    // Enemy car
+    ctx.fillStyle = "blue";
+    ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+
+    enemy.y += enemy.speed;
+
+    // Enemy reset
+    if (enemy.y > 600) {
+        enemy.y = -100;
+        enemy.x = 60 + Math.random() * 240;
+        score++;
+    }
+
+    // Collision
+    if (
+        car.x < enemy.x + enemy.width &&
+        car.x + car.width > enemy.x &&
+        car.y < enemy.y + enemy.height &&
+        car.y + car.height > enemy.y
+    ) {
+        alert("Game Over! Score: " + score);
+        location.reload();
+    }
+
+    ctx.fillStyle = "white";
+    ctx.font = "20px Arial";
+    ctx.fillText("Score: " + score, 10, 30);
+
+    requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+</script>
+
+</body>
+</html>
